@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 100%;
+  min-width: 280px;
+  font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  padding: 16px;
+}
+h1 {
+  font-size: 15px;
+  color: #fff;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+h1 span { font-size: 18px; }
+label {
+  display: block;
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+textarea {
+  width: 100%;
+  background: #16213e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+}
+textarea:focus { outline: none; border-color: #4a6fa5; }
+#commonStyle { height: 100px; }
+
+.paste-area { margin-bottom: 10px; }
+#bulkPaste {
+  height: 80px;
+  margin-bottom: 6px;
+  border: 1px dashed #4a6fa5;
+  background: #0f1a30;
+}
+
+.top-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.top-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#btnReset {
+  background: #555;
+  color: #fff;
+}
+#btnReset:hover { background: #777; }
+#btnStart {
+  background: #4a6fa5;
+  color: #fff;
+}
+#btnStart:hover { background: #5a8fc5; }
+#btnStart:disabled { background: #333; color: #666; cursor: not-allowed; }
+#btnStop {
+  background: #D64545;
+  color: #fff;
+}
+#btnStop:hover { background: #e55555; }
+#btnStop:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+#status {
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #aaa;
+  text-align: center;
+  min-height: 18px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 10px 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0 6px;
+}
+.section-header label { margin: 0; }
+
+.btn-small {
+  background: #4a6fa5;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.btn-small:hover { background: #5a8fc5; }
+
+#promptList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.prompt-item {
+  background: #16213e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  position: relative;
+}
+.prompt-item .item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.prompt-item .item-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8ab4f8;
+}
+.prompt-item .btn-remove {
+  background: none;
+  border: none;
+  color: #D64545;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+}
+.prompt-item textarea { height: 70px; margin-top: 2px; }
+
+.prompt-item.done { opacity: 0.4; }
+.prompt-item.active { border-color: #4a6fa5; box-shadow: 0 0 6px rgba(74,111,165,0.4); }
+
+.delay-row {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.delay-row label { margin: 0; white-space: nowrap; }
+.delay-row input {
+  width: 60px;
+  background: #16213e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  text-align: center;
+}
+.delay-row input:focus { outline: none; border-color: #4a6fa5; }
+.delay-row span { font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+
+<h1><span>🎨</span> Gemini 배치 이미지 생성기</h1>
+
+<div class="paste-area">
+  <label for="bulkPaste">전체 프롬프트 붙여넣기 (자동 분류)</label>
+  <textarea id="bulkPaste" placeholder="[공통 스타일] + [메인 썸네일] + [소제목2] ... 전체 텍스트를 여기에 붙여넣으세요."></textarea>
+</div>
+
+<div class="top-actions">
+  <button id="btnReset">초기화</button>
+  <button id="btnStart">▶ 순차 생성 시작</button>
+  <button id="btnStop" disabled>■ 중지</button>
+</div>
+<div id="status"></div>
+
+<hr class="divider">
+
+<label for="commonStyle">[공통 스타일] 프롬프트</label>
+<textarea id="commonStyle" placeholder="공통으로 적용될 스타일 프롬프트를 입력하세요..."></textarea>
+
+<div class="section-header">
+  <label>개별 프롬프트 목록</label>
+  <button class="btn-small" id="btnAdd">+ 추가</button>
+</div>
+<div id="promptList"></div>
+
+<div class="delay-row">
+  <label for="delay">요청 간격</label>
+  <input type="number" id="delay" value="3" min="1" max="120">
+  <span>초 (이미지 생성 완료 후 대기)</span>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

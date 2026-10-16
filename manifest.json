@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Batch Image Generator",
+  "version": "1.1.0",
+  "description": "공통 스타일 + 개별 프롬프트를 조합하여 Gemini에서 이미지를 순차 생성합니다.",
+  "permissions": ["storage", "activeTab", "scripting", "sidePanel", "tabs", "downloads"],
+  "host_permissions": ["https://gemini.google.com/*", "https://aistudio.google.com/*"],
+  "action": {
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gemini.google.com/*", "https://aistudio.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
