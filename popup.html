@@ -176,6 +176,60 @@ textarea:focus { outline: none; border-color: #4a6fa5; }
 }
 .delay-row input:focus { outline: none; border-color: #4a6fa5; }
 .delay-row span { font-size: 12px; color: #888; }
+
+.account-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.account-row label { margin: 0; white-space: nowrap; }
+.account-row select {
+  flex: 1;
+  background: #16213e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.account-row select:focus { outline: none; border-color: #4a6fa5; }
+
+#logPanel {
+  max-height: 250px;
+  overflow-y: auto;
+  background: #0d1117;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+}
+#logPanel:empty::before {
+  content: '로그가 여기에 표시됩니다...';
+  color: #555;
+}
+#logPanel .log-line { margin: 1px 0; word-break: break-all; }
+#logPanel .log-ERROR { color: #f85149; }
+#logPanel .log-WARN { color: #d29922; }
+#logPanel .log-INFO { color: #58a6ff; }
+#logPanel .log-DEBUG { color: #8b949e; }
+#logPanel .log-time { color: #6e7681; margin-right: 4px; }
+#logPanel .log-cat { color: #bc8cff; margin-right: 4px; }
+
+#summaryPanel {
+  margin-top: 8px;
+  padding: 8px;
+  background: #16213e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 12px;
+  display: none;
+}
+#summaryPanel .summary-success { color: #3fb950; }
+#summaryPanel .summary-fail { color: #f85149; }
 </style>
 </head>
 <body>
@@ -194,6 +248,17 @@ textarea:focus { outline: none; border-color: #4a6fa5; }
 </div>
 <div id="status"></div>
 
+<div class="account-row">
+  <label for="accountSelect">Gemini 계정</label>
+  <select id="accountSelect">
+    <option value="0">myid9734@gmail.com (기본)</option>
+    <option value="1">neostep0524@gmail.com</option>
+    <option value="2">kr.deliveryauto@gmail.com</option>
+    <option value="3">myid5058@gmail.com</option>
+    <option value="4">f22767477@gmail.com</option>
+  </select>
+</div>
+
 <hr class="divider">
 
 <label for="commonStyle">[공통 스타일] 프롬프트</label>
@@ -210,6 +275,17 @@ textarea:focus { outline: none; border-color: #4a6fa5; }
   <input type="number" id="delay" value="3" min="1" max="120">
   <span>초 (이미지 생성 완료 후 대기)</span>
 </div>
+
+<hr class="divider">
+
+<div class="section-header">
+  <label>실행 로그</label>
+  <div style="display:flex;gap:4px;">
+    <button class="btn-small" id="btnExportLog">내보내기</button>
+    <button class="btn-small" id="btnClearLog" style="background:#555;">지우기</button>
+  </div>
+</div>
+<div id="logPanel"></div>
 
 <script src="popup.js"></script>
 </body>
